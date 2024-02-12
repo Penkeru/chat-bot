@@ -1,12 +1,26 @@
-# Forter Chat Bot
+To initiate the chat bot, run the following command in the terminal:
 
-Hi there! :)
+## Server
+
+To start the server: (Port 3000)
+```
+cd server
+npm install
+npm run start:dev
+
+```
+
+## Client
+
+To start the client:
+```
+cd client
+npm install
+npm run serve
+```
+
+it's better to run them on two different console which is more convenient to see the logs.
+
+Enjoy!
 
 
-Your challenge is to build a very simple chat bot web app.
-
-In this repository, you will find working server and client skeletons.
-
-The full challenge description can be found [here](https://docs.google.com/document/d/1g9d3-i1bCUSCMYMcodb_YKX6J8K2QmeVT4S4qUyeZH8/edit?usp=sharing)
-
-Good Luck!
