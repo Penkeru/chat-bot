@@ -1,9 +1,6 @@
 import compromise from 'compromise';
 
 
-
-
-
 export class ChatBot {
 
   constructor() {
@@ -19,12 +16,6 @@ export class ChatBot {
         return this.questionAndAnswer[question];
       }
     }
-    return null;
+    return 'I don`t know, can you tell me the answer?';
   }
-
-  // add a question and answer to the bot
-  addQuestionAndAnswer(question, answer) {
-    this.questionAndAnswer[question] = answer;
-  }
-
 }

@@ -4,15 +4,8 @@ import { Server } from 'socket.io';
 import { ChatBot } from './chat-bot/chat-bot.js';
 import cors from 'cors';
 
-
-
 const app = express();
 const port = process.env.PORT || 3000;
-const botName = process.env.CHAT_BOT_NAME || 'Chat Bot';
-
-
-
-
 
 app.use(cors());
 const http =  httpServer.createServer(app);

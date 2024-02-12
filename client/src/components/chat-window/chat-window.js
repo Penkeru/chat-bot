@@ -8,46 +8,63 @@ import { io } from "https://cdn.socket.io/4.4.1/socket.io.esm.min.js";
 export class ChatWindow extends LitElement {
   static get properties() {
     return {
-      /**
-       * The name to say "Hello" to.
-       * @type {string}
-       */
       name: {type: String},
-
-      /**
-       * The number of times the button has been clicked.
-       * @type {number}
-       */
-      count: {type: Number},
+      messages:{type: Array},
     };
   }
 
   constructor() {
     super();
-    this.name = 'Bot';
-    this.count = 0;
+    this.name = 'Unknown User';
+    this.messages = [];
     this.socket = io('http://localhost:3000', {
       extraHeaders: {
         "Access-Control-Allow-Origin": "*"
     }});
-    this.socket.on('new connection', console.log);
+    this.socket.on('response', this.handleResponse.bind(this));
   }
 
   static styles = [style];
 
-  onButtonClick() {
-    this.count++;
+  handleResponse(response) {
+    this.messages = [...this.messages, { text: response, sender: 'bot' }];
+    this.requestUpdate();
+  }
+
+  sendMessage(message) {
+    this.messages = [...this.messages, { text: message, sender: this.name }];
+    this.socket.emit('message', message);
+  }
+
+  handleKeyDown(event) {
+    if (event.key === 'Enter') {
+      this.sendMessage(event.target.value);
+      event.target.value = '';
+    }
+  }
+
+  sendMessageClick() {
+    const input = this.shadowRoot.getElementById('messageInput');
+    const message = input.value.trim();
+    if (message !== '') {
+      this.sendMessage(message);
+      input.value = '';
+    }
   }
 
   render() {
-    const {name, count} = this;
     return html`
-      <div>Hi, this is a demo element!</div>
-      <div>Like this, you can render reactive properties: ${name}</div>
-      <div>And like this, you can listen to events:</div>
-      <button @click="${this.onButtonClick}">Number of clicks: ${count}</button>
+        <ul id="messages">
+            ${this.messages.map(
+                    (msg) => html`
+            <li class="message ${msg.sender === 'user' ? 'user-message' : 'bot-message'}">${msg.text}</li>
+          `
+            )}
+        </ul>
+        <input id="messageInput" type="text" placeholder="Type your message..." @keydown="${this.handleKeyDown}" />
+        <button @click="${this.sendMessageClick}">Send</button>
     `;
   }
 }
 
-window.customElements.define('demo-element', ChatWindow);
+window.customElements.define('chat-window', ChatWindow);
