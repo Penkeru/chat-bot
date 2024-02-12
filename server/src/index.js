@@ -25,12 +25,16 @@ app.get('/', (req, res) => {
 });
 
 io.on('connection', (socket) => {
-    console.log('new member has joined!');
+    console.log('new user has joined!');
     socket.on('message', (message) => {
         console.log('message:', message);
-        const answer = chatBot.processMessage(message);
-        socket.emit('response', answer);
+        //const answer = chatBot.processMessage(message);
+        socket.broadcast.emit('message', message);
     })
+
+    socket.on('disconnect', () => {
+        console.log('a user disconnected');
+    });
 });
 
 

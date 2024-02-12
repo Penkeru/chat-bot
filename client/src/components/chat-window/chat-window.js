@@ -22,18 +22,19 @@ export class ChatWindow extends LitElement {
         "Access-Control-Allow-Origin": "*"
     }});
     this.socket.on('response', this.handleResponse.bind(this));
+    this.socket.on('message',  this.handleResponse.bind(this));
   }
 
   static styles = [style];
 
   handleResponse(response) {
-    this.messages = [...this.messages, { text: response, sender: 'bot' }];
+    this.messages = [...this.messages, response];
     this.requestUpdate();
   }
 
   sendMessage(message) {
-    this.messages = [...this.messages, { text: message, sender: this.name }];
-    this.socket.emit('message', message);
+    this.socket.emit('message', {sender:false, text: message, name: this.name});
+    this.messages = [...this.messages, {sender:true, text: message, name: this.name}];
   }
 
   handleKeyDown(event) {
@@ -57,7 +58,7 @@ export class ChatWindow extends LitElement {
         <ul id="messages">
             ${this.messages.map(
                     (msg) => html`
-            <li class="message ${msg.sender === 'user' ? 'user-message' : 'bot-message'}">${msg.text}</li>
+            <li class="message ${msg.sender ? 'user-message' : 'regular-message'}">${msg.name+': '+msg.text}</li>
           `
             )}
         </ul>
