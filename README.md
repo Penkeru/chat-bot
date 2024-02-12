@@ -1,3 +1,6 @@
+# Chat Bot
+____________________
+
 To initiate the chat bot, run the following command in the terminal:
 
 ## Server
