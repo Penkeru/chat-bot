@@ -16,7 +16,6 @@
     "rimraf": "^3.0.2"
   },
   "dependencies": {
-    "compromise": "^14.11.2",
     "express": "^4.17.1",
     "socket.io": "^4.5.2"
   }

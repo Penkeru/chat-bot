@@ -8,14 +8,12 @@ import { io } from "https://cdn.socket.io/4.4.1/socket.io.esm.min.js";
 export class ChatWindow extends LitElement {
   static get properties() {
     return {
-      name: {type: String},
       messages:{type: Array},
     };
   }
 
   constructor() {
     super();
-    this.name = 'Unknown User';
     this.messages = [];
     this.socket = io('http://localhost:3000', {
       extraHeaders: {
@@ -23,6 +21,13 @@ export class ChatWindow extends LitElement {
     }});
     this.socket.on('response', this.handleResponse.bind(this));
     this.socket.on('message',  this.handleResponse.bind(this));
+  }
+
+
+
+  updated(changedProperties) {
+    super.updated(changedProperties);
+    this.scrollToBottom();
   }
 
   static styles = [style];
@@ -33,8 +38,8 @@ export class ChatWindow extends LitElement {
   }
 
   sendMessage(message) {
-    this.socket.emit('message', {sender:false, text: message, name: this.name});
-    this.messages = [...this.messages, {sender:true, text: message, name: this.name}];
+    this.socket.emit('message', {sender:'other-message', text: message});
+    this.messages = [...this.messages, {sender:'user-message', text: message}];
   }
 
   handleKeyDown(event) {
@@ -53,17 +58,27 @@ export class ChatWindow extends LitElement {
     }
   }
 
+  scrollToBottom() {
+    // Scroll to the bottom of the chat window
+    const chatWindow = this.shadowRoot.getElementById('chatWindow');
+    chatWindow.scrollTop = chatWindow.scrollHeight;
+  }
+
   render() {
     return html`
-        <ul id="messages">
+        <div id="chat-window" class="messages-list-container">
             ${this.messages.map(
                     (msg) => html`
-            <li class="message ${msg.sender ? 'user-message' : 'regular-message'}">${msg.name+': '+msg.text}</li>
-          `
+                        <div class="message-item-container ${msg.sender}">
+                            <div class="message-item">${msg.text}</div>
+                        </div>
+                    `
             )}
-        </ul>
-        <input id="messageInput" type="text" placeholder="Type your message..." @keydown="${this.handleKeyDown}" />
-        <button @click="${this.sendMessageClick}">Send</button>
+        </div>
+        <div class="input-container">
+            <input class="message-input" type="text" placeholder="Type your message..." @keydown="${this.handleKeyDown}" />
+            <button class="send-message-button" @click="${this.sendMessageClick}">Send</button>
+        </div>
     `;
   }
 }

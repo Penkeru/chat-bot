@@ -25,15 +25,23 @@ app.get('/', (req, res) => {
 });
 
 io.on('connection', (socket) => {
-    console.log('new user has joined!');
+    console.log('user connected');
+    chatBot.onUserJoin(socket);
     socket.on('message', (message) => {
         console.log('message:', message);
-        //const answer = chatBot.processMessage(message);
-        socket.broadcast.emit('message', message);
+        if(chatBot.checkIfChatBotQuestion(message.text)) {
+            const answer = chatBot.handleMessage(message.text);
+            if(answer) {
+                socket.emit('response', {sender:'bot-message', text: answer});
+            }
+        } else {
+            socket.broadcast.emit('message', message);
+        }
     })
 
     socket.on('disconnect', () => {
-        console.log('a user disconnected');
+        console.log('user disconnected');
+        chatBot.onUserLeave(socket);
     });
 });
 
