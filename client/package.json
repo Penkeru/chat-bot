@@ -1,6 +1,7 @@
 {
   "name": "client",
   "version": "0.1.0",
+  "author": "Uriel Penker",
   "private": true,
   "dependencies": {
     "@types/node": "^16.18.82",

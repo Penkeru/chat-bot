@@ -1,51 +1,30 @@
 import express from 'express';
 import httpServer from 'http';
-import { Server } from 'socket.io';
-import { ChatBot } from './chat-bot/chat-bot.js';
 import cors from 'cors';
+import { Server } from "socket.io";
+import { AppController } from "./controllers/appController.js";
+import { ChatBot } from "./chat-bot/chat-bot.js";
 
 const app = express();
-const port = process.env.PORT || 3000;
+const serverPort = 4000;
+const socketPort = 3000;
 
 app.use(cors());
-const http =  httpServer.createServer(app);
 
-//create a new chat bot
-const chatBot = new ChatBot();
-const io = new Server(http, {
+const server =  httpServer.createServer(app);
+const appController = new AppController(app);
+
+const io = new Server(server, {
     cors: {
-        origin: "*",
-        methods: ["GET", "POST"],
-        credentials: true
-    }
+        origin: `http://localhost:${socketPort}`,
+        methods: ['GET', 'POST'],
+    },
 });
 
-app.get('/', (req, res) => {
-    res.send('Hello World!')
-});
+const chatBot = new ChatBot(io);
+chatBot.listenForMessages();
 
-io.on('connection', (socket) => {
-    console.log('user connected');
-    chatBot.onUserJoin(socket);
-    socket.on('message', (message) => {
-        console.log('message:', message);
-        if(chatBot.checkIfChatBotQuestion(message.text)) {
-            const answer = chatBot.handleMessage(message.text);
-            if(answer) {
-                socket.emit('response', {sender:'bot-message', text: answer});
-            }
-        } else {
-            socket.broadcast.emit('message', message);
-        }
-    })
-
-    socket.on('disconnect', () => {
-        console.log('user disconnected');
-        chatBot.onUserLeave(socket);
-    });
-});
-
-
-http.listen(port, () => {
-    console.log(`listening on *:${port}`);
+appController.attachControllers();
+server.listen(serverPort, () => {
+    console.log(`listening on *:${serverPort}`);
 });
