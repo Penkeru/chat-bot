@@ -8,7 +8,6 @@ export const MainPage = css<MainPageProps>(() => {
     align-items: center;
     justify-content: center;
     height: 100vh;
-    background-color: #F5F7FF;
     color: #002169;
     
     > .form-container{
@@ -46,12 +45,12 @@ export const MainPage = css<MainPageProps>(() => {
       .form-button{
         background-color: #3156FF;
         color: #FFFFFF;
-        padding: 10px 16px;
-        border-radius: 8px;
-        border:0;
         box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-        font-weight: bold;
         font-size: 14px;
+        border-radius: 8px;
+        padding: 10px 16px;
+        border:0;
+        font-weight: bold;
         line-height: 21px;
         cursor: pointer;
       }

@@ -16,7 +16,7 @@ export const MainPage = styled(({className, userName, setUserName, socketConnect
       socketConnection.emit('join_room', { userName });
       navigate('/chat-room', { replace: true });
     }
-  },[socketConnection, userName, navigate]);
+  },[userName, navigate, socketConnection]);
 
   return (
     <div {...{className}}>
