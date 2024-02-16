@@ -5,12 +5,14 @@ import { UsersListProps } from './users-list.model';
 import { getUserNameColor } from "../../utils/converter.helper";
 import classNames from "classnames";
 
-export const UsersList = styled(({className, usersList, currentUsername}: UsersListProps) => {
+export const UsersList = styled(({className, usersList, userConnectionId}: UsersListProps) => {
   return (usersList.length > 0 ?
       (<div {...{className}}>
         <ul className="users-list">
         {usersList.map((user, index) => (
-          <li className={classNames({active: currentUsername === user.userName})} style={{color:getUserNameColor(user.userName)}} key={index}>{user.userName}</li>
+          <li className={classNames({active: userConnectionId === user.userConnectionId})}
+              style={{color:getUserNameColor(user.userName)}}
+              key={index}>{user.userName}</li>
         ))}
         </ul>
        </div> ): <></>);

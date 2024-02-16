@@ -6,9 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { UsersList } from "../../components/users-list/users-list.component";
 import { ChatMessagesList } from "../../components/chat-message-list/chat-messages-list.component";
 import { ChatMessageInput } from "../../components/chat-message-input/chat-message-input.component";
-
-const MESSAGE_STEAM = 'receive_message';
-const USERS_LIST_STREAM = 'chatroom_users';
+import { ConnectionType } from "../../enum/connection-type.enum";
 
 export const ChatRoomPage = styled(({className, userName, socketConnection}: ChatRoomPageProps) => {
   const [messagesRecieved, setMessagesReceived] = useState([]);
@@ -16,47 +14,48 @@ export const ChatRoomPage = styled(({className, userName, socketConnection}: Cha
   const navigate = useNavigate();
 
   const onLeaveRoomClick = useCallback(() => {
+    socketConnection.emit(ConnectionType.USER_LEAVE_ROOM);
     navigate('/', {replace: true});
-  },[navigate]);
-
-  useEffect(()=>{
-    if(!userName){
-      navigate('/', {replace: true});
-    }
-  },[userName, navigate])
+  },[navigate, socketConnection]);
 
   const sendMessage = useCallback((message:string)=>{
     if (message !== '') {
       const date = Date.now();
-      socketConnection.emit('send_message', { name:userName, message, date });
+      socketConnection.emit(ConnectionType.USER_SEND_MESSAGE, { name:userName, message, date });
     }
   },[socketConnection, userName]);
 
  useEffect(()=> {
     if(socketConnection){
-
-      socketConnection.on('receive_message', (recievedMessage) => {
-        setMessagesReceived((prevMessages) => prevMessages.concat(recievedMessage));
+      socketConnection.on(ConnectionType.MESSAGES_STEAM, (message) => {
+        setMessagesReceived((prevMessages) => prevMessages.concat(message));
       });
 
-      socketConnection.on(USERS_LIST_STREAM, (usersList) => {
+      socketConnection.on(ConnectionType.USERS_LIST_STREAM, (usersList) => {
         setUsersList(usersList);
       });
     }
 
     return () => {
       if(socketConnection) {
-        socketConnection.off(MESSAGE_STEAM);
-        socketConnection.off(USERS_LIST_STREAM);
+        socketConnection.off(ConnectionType.MESSAGES_STEAM);
+        socketConnection.off(ConnectionType.USERS_LIST_STREAM);
       }
     }
- },[socketConnection])
+ },[socketConnection]);
+
+  useEffect(()=>{
+    // in case of refresh, if username is not present, redirect to main page
+    if(!userName){
+      navigate('/', {replace: true});
+    }
+  },[userName, navigate]);
 
   return (
     <div {...{className}}>
       <div className="side-bar">
         <h1 className="room-title">Chat room</h1>
-        <UsersList usersList={usersList} currentUsername={userName}/>
+        <UsersList usersList={usersList} userConnectionId={socketConnection.id}/>
         <button className="leave-button" onClick={onLeaveRoomClick}>Leave Room</button>
       </div>
 

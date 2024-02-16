@@ -5,9 +5,10 @@ export const ChatRoomPage = css<ChatRoomPageProps>(({theme}) => {
   return css`
     padding: 20px;
     margin: 20px auto 0;
-    max-width: 1100px;
+    max-width: 900px;
     display: grid;
-    grid-template-columns: 1fr 4fr;
+    grid-template-columns: 200px calc(90% - 160px);
+    overflow: hidden;
     gap: 20px;
     
     overflow-y: auto; /* Enable vertical scrolling if content exceeds window height */

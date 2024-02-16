@@ -6,11 +6,12 @@ export const ChatMessageInput = css<ChatMessageInputProps>(({theme}) => {
     display:flex;
     align-items:center;
     justify-content:space-between;
+    gap: 10px;
     
     .message-input{
       padding: 14px;
       margin-right: 16px;
-      width: 80%;
+      width: calc(95% - 130px);
       border-radius: 6px;
       border: 1px solid #3156FF;
       font-size: 0.9rem;
@@ -27,6 +28,7 @@ export const ChatMessageInput = css<ChatMessageInputProps>(({theme}) => {
       font-weight: bold;
       line-height: 21px;
       cursor: pointer;
+      width: 130px;
     }
   `;
 });

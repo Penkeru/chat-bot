@@ -3,6 +3,10 @@ import { ChatMessagesListProps } from "./chat-messages-list.model";
 
 export const ChatMessagesList = css<ChatMessagesListProps>(({theme}) => {
   return css`
+    max-height: 90%;
+    overflow-y: auto;
+    scroll-behavior: smooth; 
+  
     .message-container {
       background-color: #ffffff;
       border-radius: 8px;
@@ -17,20 +21,25 @@ export const ChatMessagesList = css<ChatMessagesListProps>(({theme}) => {
       
       .message-info {
         font-size: 12px;
-        color: #3156FF;
+        color: #002169;
         margin-bottom: 5px;
         display: flex;
         align-items: center;
         justify-content: space-between;
-
-        > span {
-          font-weight: bold;
-          margin-right: 5px;
+        
+        .message-user{
+          font-weight: 600;
+          font-size: 14px;
+        }
+        
+        .message-date {
+          font-size: 12px;
+          color: #002169;
         }
       }
 
       .message-text {
-        color: #000000;
+        color: #002169;
         font-size: 14px;
       }
     }
