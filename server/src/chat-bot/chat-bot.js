@@ -7,7 +7,7 @@ const ConnectionType  = {
     USER_LEAVE_ROOM : 'leave_room',
     USER_CONNECTED :'user_connected',
     USER_JOINED_ROOM : 'user_joined_room',
-    USER_DISCONNECTED : 'user_disconnected',
+    USER_DISCONNECTED : 'disconnect',
 }
 
 export class ChatBot {
@@ -16,10 +16,9 @@ export class ChatBot {
     }
 
     handleUserConnection(socket) {
-        console.log(`User connected ${socket.id}`);
         socket.on(ConnectionType.USER_JOINED_ROOM, ({userName}) => {
             chatRoomUsers.push({userName, userConnectionId: socket.id});
-            this.io.emit(ConnectionType.MESSAGES_STEAM, {
+            socket.broadcast.emit(ConnectionType.MESSAGES_STEAM, {
                 message: `${userName} has joined the room! Yay!!`,
                 name: CHAT_BOT,
                 date: Date.now(),
@@ -47,7 +46,7 @@ export class ChatBot {
             const userName = chatRoomUsers[userIndex].userName;
             chatRoomUsers.splice(userIndex, 1);
 
-            this.io.emit(ConnectionType.MESSAGES_STEAM, {message:`${userName} has left the room... So sad! :(`, name: userName, date: Date.now()});
+            socket.broadcast.emit(ConnectionType.MESSAGES_STEAM, {message:`${userName} has left the room... So sad! :(`, name: CHAT_BOT, date: Date.now()});
             this.io.emit(ConnectionType.USERS_LIST_STREAM, chatRoomUsers);
         }
     }
