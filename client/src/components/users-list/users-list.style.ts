@@ -6,12 +6,12 @@ export const UsersList = css<UsersListProps>(({theme}) => {
     font-family: Arial, sans-serif;
     max-width: 400px;
     margin: 0 auto;
-    padding: 20px;
-    border: 1px solid #ccc;
+    padding: 10px;
     border-radius: 8px;
-    background-color: #f9f9f9;
     width: 100%;
-    height: 100%;
+    max-height: 620px;
+    overflow-y: auto;
+    overflow-x:hidden;
     
     > .users-list{
       list-style-type: none;
@@ -20,15 +20,37 @@ export const UsersList = css<UsersListProps>(({theme}) => {
 
       li {
         padding: 5px 10px;
-        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
         
-        &:last-child {
-          border-bottom: none;
+        .initials-container{
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          color: #FFFFFF;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          
+          > span{
+            font-size: 1.2rem;
+          }
         }
         
-        &.active{
-          font-weight: bold;
-          background-color: #e5e5e5;
+        .name-container{
+            span{
+              font-size: 1.2rem;
+              color: #002169;
+            }
+        }
+        &.active {
+          .name-container{
+            span{
+              font-weight: bold;
+            }
+          }
         }
       }
     }

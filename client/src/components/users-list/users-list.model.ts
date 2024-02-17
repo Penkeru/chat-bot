@@ -1,10 +1,8 @@
-export interface userInfo {
-  userName:string;
-  userConnectionId: string;
-}
+import { UserInfo } from "../../models/user.model";
+
 
 export interface UsersListProps {
   className?: string;
-  usersList: userInfo[];
+  usersList: UserInfo[];
   userConnectionId?: string;
 }

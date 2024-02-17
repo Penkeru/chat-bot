@@ -8,6 +8,8 @@ export function getUserNameColor (username:string) {
 
 
 export function formatDateFromTimestamp(timestamp:string){
-  const date = new Date(timestamp);
-  return date.toLocaleString();
+  const newDate = new Date(timestamp);
+  const time = newDate.toLocaleString().split(',')[1].trim();
+  const date = newDate.toLocaleString().split(',')[0].trim();
+  return {time, date};
 }

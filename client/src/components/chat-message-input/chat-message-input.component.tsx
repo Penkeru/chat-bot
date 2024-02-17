@@ -28,7 +28,7 @@ export const ChatMessageInput = styled(({className, onMessageSubmit}: ChatMessag
       value={message}
     />
     <button className='submit-button' onClick={sendMessage}>
-      Send Message
+      Send
     </button>
   </div>
 })`${styles.ChatMessageInput}`;

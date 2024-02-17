@@ -7,6 +7,7 @@ import { UsersList } from "../../components/users-list/users-list.component";
 import { ChatMessagesList } from "../../components/chat-message-list/chat-messages-list.component";
 import { ChatMessageInput } from "../../components/chat-message-input/chat-message-input.component";
 import { ConnectionType } from "../../enum/connection-type.enum";
+import { ChatHeader } from "../../components/chat-header/chat-header.component";
 
 export const ChatRoomPage = styled(({className, userName, socketConnection}: ChatRoomPageProps) => {
   const [messagesRecieved, setMessagesReceived] = useState([]);
@@ -21,7 +22,7 @@ export const ChatRoomPage = styled(({className, userName, socketConnection}: Cha
   const sendMessage = useCallback((message:string)=>{
     if (message !== '') {
       const date = Date.now();
-      socketConnection.emit(ConnectionType.USER_SEND_MESSAGE, { name:userName, message, date });
+      socketConnection.emit(ConnectionType.USER_SEND_MESSAGE, { name:userName, message, date, streamId:socketConnection.id});
     }
   },[socketConnection, userName]);
 
@@ -53,14 +54,13 @@ export const ChatRoomPage = styled(({className, userName, socketConnection}: Cha
 
   return (
     <div {...{className}}>
-      <div className="side-bar">
-        <h1 className="room-title">Chat room</h1>
-        <UsersList usersList={usersList} userConnectionId={socketConnection.id}/>
-        <button className="leave-button" onClick={onLeaveRoomClick}>Leave Room</button>
+      <div className="chatroom-header">
+        <ChatHeader {...{onLeaveRoomClick:onLeaveRoomClick, userName, onlineUsers: usersList}}/>
       </div>
-
       <div className="chatbox-container">
-        <ChatMessagesList {...{messages:messagesRecieved}}/>
+        <ChatMessagesList {...{messages:messagesRecieved, userStreamId:socketConnection.id}}/>
+      </div>
+      <div className="chat-input-container">
         <ChatMessageInput {...{onMessageSubmit:sendMessage}}/>
       </div>
     </div>
