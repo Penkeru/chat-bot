@@ -77,7 +77,7 @@ export class ChatBot {
                 }
             } else {
                 questionsList.push({originalQuestion: text, answer: null, userAnswered: null, identifier: cleanedText});
-                return "";
+                return "I don't know what the answer for that question, Does someone else know?";
             }
         } else {
             const unansweredQuestions = questionsList.filter(question => question.answer === null);

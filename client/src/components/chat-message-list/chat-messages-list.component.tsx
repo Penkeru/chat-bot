@@ -18,8 +18,8 @@ export const ChatMessagesList = styled(({className, messages, userStreamId}: Cha
   return <div {...{className}} ref={containerRef}>
     {messages.map((msg, i) => (
       <div className="message-container" key={i}>
-        <div className="message-user-avatar" style={{background:getUserNameColor(msg.name)}}>
-          <span>{msg.name.slice(0,2)}</span>
+        <div className="message-user-avatar" style={{background:getUserNameColor(msg.name.toUpperCase())}}>
+          <span>{msg.name.toUpperCase().slice(0,2)}</span>
         </div>
         <div className={classNames('message-text', {'current-user': msg.streamId === userStreamId})}>
           <span>{msg.message}</span>

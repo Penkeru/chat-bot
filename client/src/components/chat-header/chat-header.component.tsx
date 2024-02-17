@@ -5,10 +5,11 @@ import { ChatHeaderProps } from './chat-header.model';
 import { getUserNameColor } from "../../utils/converter.helper";
 
 export const ChatHeader = styled(({className, onLeaveRoomClick, userName, onlineUsers}: ChatHeaderProps) => {
+
   return (
     <div {...{className}}>
       <div className="user-info-container">
-        <div className="user-avatar" style={{background:getUserNameColor(userName)}}><span>{userName.slice(0,2)}</span></div>
+        <div className="user-avatar" style={{background:getUserNameColor(userName.toUpperCase())}}><span>{userName.toUpperCase().slice(0,2)}</span></div>
         <div className="user-name-container">
           <span>{userName}</span>
         </div>
