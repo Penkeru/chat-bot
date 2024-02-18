@@ -1,5 +1,7 @@
 import { isAnswerToQuestion, isAQuestion } from "../utils/helper.js";
 
+
+
 const CHAT_BOT = 'CB'; //This is the name of the bot that will be sending messages to the client.
 const chatRoomUsers = []; //This is an array that will hold the users that join the chat room.
 const ConnectionType  = {
@@ -19,7 +21,7 @@ export class ChatBot {
         this.io = io;
     }
 
-    handleUserConnection(socket) {
+    onUserConenected(socket) {
         socket.on(ConnectionType.USER_JOINED_ROOM, ({userName}) => {
             chatRoomUsers.push({userName, userConnectionId: socket.id});
             socket.broadcast.emit(ConnectionType.MESSAGES_STEAM, {
@@ -28,24 +30,34 @@ export class ChatBot {
                 date: Date.now(),
             });
             socket.emit(ConnectionType.MESSAGES_STEAM, {
-                message: `Howdy ${userName}, I am the chat bot. Enjoy your stay! :)`,
+                message: `Hey ${userName}, I am the chat bot. Enjoy your stay! :)`,
                 name: CHAT_BOT,
                 date :Date.now(),
             });
 
             this.io.emit(ConnectionType.USERS_LIST_STREAM, chatRoomUsers);
         });
+    }
 
+    async onUserSendMessage(socket){
         socket.on(ConnectionType.USER_SEND_MESSAGE, ({message,name, date, streamId})=> {
             this.io.emit(ConnectionType.MESSAGES_STEAM, {message, name, date, streamId});
-            const answerToQuestion = this.handleQuestions(message, name);
+            const answerToQuestion = this.handleQuestions(message);
             if(answerToQuestion){
                 this.io.emit(ConnectionType.MESSAGES_STEAM, {message: answerToQuestion, name: CHAT_BOT, date: Date.now()});
             }
         });
+    }
 
+    onUserDisconnected(socket) {
         socket.on(ConnectionType.USER_LEAVE_ROOM, this.onUserLeave.bind(this, socket));
         socket.on(ConnectionType.USER_DISCONNECTED, this.onUserLeave.bind(this, socket));
+    }
+
+    handleUserConnection(socket) {
+        this.onUserConenected(socket);
+        this.onUserSendMessage(socket);
+        this.onUserDisconnected(socket);
     }
 
     onUserLeave(socket) {
@@ -65,18 +77,18 @@ export class ChatBot {
         });
     }
 
-    handleQuestions(text, userName) {
+    handleQuestions(text) {
         if (isAQuestion(text)) {
             const cleanedText = text.replace(/[^\w\s]/gi, '').toLowerCase();
             const index = questionsList.findIndex(item => item.identifier === cleanedText);
             if (index !== -1) {
                 if(questionsList[index].answer !== null) {
-                    return `The answer is: ${questionsList[index].answer}, thanks to ${questionsList[index].userAnswered} who provided the answer.`;
+                    return questionsList[index].answer;
                 } else {
                     return `I am still waiting for an answer to that question. I will let you know when I get one.`;
                 }
             } else {
-                questionsList.push({originalQuestion: text, answer: null, userAnswered: null, identifier: cleanedText});
+                questionsList.push({originalQuestion: text, answer: null, identifier: cleanedText});
                 return "I don't know what the answer for that question, Does someone else know?";
             }
         } else {
@@ -84,8 +96,6 @@ export class ChatBot {
             for (const question of unansweredQuestions) {
                if(isAnswerToQuestion(question.originalQuestion, text)) {
                    question.answer = text;
-                   question.userAnswered = userName;
-
                }
             }
             return "";

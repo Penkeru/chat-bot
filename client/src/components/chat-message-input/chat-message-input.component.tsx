@@ -28,7 +28,9 @@ export const ChatMessageInput = styled(({className, onMessageSubmit}: ChatMessag
       value={message}
     />
     <button className='submit-button' onClick={sendMessage}>
-      Send
+      <svg style={{width:'24px', height:'24px'}} viewBox="0 0 24 24">
+        <path fill="#3156FF" d="M2,21L23,12L2,3V10L17,12L2,14V21Z"></path>
+      </svg>
     </button>
   </div>
 })`${styles.ChatMessageInput}`;

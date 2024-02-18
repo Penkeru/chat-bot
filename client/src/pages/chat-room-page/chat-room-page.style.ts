@@ -3,7 +3,6 @@ import { ChatRoomPageProps } from './chat-room-page.model';
 
 export const ChatRoomPage = css<ChatRoomPageProps>(({theme}) => {
   return css`
-    padding: 20px;
     margin: 40px auto;
     max-width: 900px;
     display:flex;
@@ -22,15 +21,14 @@ export const ChatRoomPage = css<ChatRoomPageProps>(({theme}) => {
       justify-content: space-between;
       align-items: center;
       gap: 20px;
-      padding: 10px;
+      padding: 20px;
       border-bottom: 2px solid darkgray;
-      padding-bottom: 20px;
     }
     
     
     .chatbox-container{
       overflow: auto;
-      padding: 10px;
+      padding: 0 20px;
       height: 60vh;
       display:flex;
       flex-direction: column;
@@ -40,8 +38,7 @@ export const ChatRoomPage = css<ChatRoomPageProps>(({theme}) => {
     
     .chat-input-container{
       border-top: 2px solid darkgray;
-      padding: 10px;
-      padding-top: 20px;
+      padding: 20px;
     }
   `;
 });

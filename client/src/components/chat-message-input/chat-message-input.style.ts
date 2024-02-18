@@ -9,26 +9,25 @@ export const ChatMessageInput = css<ChatMessageInputProps>(({theme}) => {
     gap: 10px;
     
     .message-input{
-      padding: 14px;
-      margin-right: 16px;
-      width: calc(95% - 130px);
-      border-radius: 6px;
-      border: 1px solid #3156FF;
-      font-size: 0.9rem;
+      color: #2f2f2f;
+      font-family: Raleway, sans-serif;
+      font-size: 16px;
+      background-color: #d2d2d2;
+      width: 100%;
+      height: 40px;
+      max-height: 120px;
+      border: none;
+      padding: 10px 15px;
+      resize: none;
+      box-sizing: border-box;
+      border-radius: 10px;
+      transition: 0.3s background-color;
     }
     
     .submit-button{
-      background-color: #3156FF;
-      color: #FFFFFF;
-      box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-      font-size: 14px;
-      border-radius: 8px;
-      padding: 10px 16px;
-      border:0;
-      font-weight: bold;
-      line-height: 21px;
       cursor: pointer;
-      width: 130px;
+      background: white;
+      border: none;
     }
   `;
 });

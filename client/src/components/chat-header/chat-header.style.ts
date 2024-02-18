@@ -13,6 +13,7 @@ export const ChatHeader = css<ChatHeaderProps>(({theme}) => {
       align-items: center;
       justify-content: center;
       gap: 10px;
+      margin-right: 10px;
       
       .user-avatar{
         width: 50px;
@@ -29,9 +30,14 @@ export const ChatHeader = css<ChatHeaderProps>(({theme}) => {
         }
       }
       
-      .user-name-container > span{
-        color: #002169;
-        font-size: 24px;
+      .user-name-container {
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+        > span {
+          color: #002169;
+          font-size: 24px;
+        }
       }
     }
     
@@ -42,6 +48,7 @@ export const ChatHeader = css<ChatHeaderProps>(({theme}) => {
       font-size: 14px;
       font-weight: 700;
       color: #002169;
+      text-align:center;
     }
     .user-panel-options {
       display: flex;

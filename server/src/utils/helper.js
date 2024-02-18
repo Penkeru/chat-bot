@@ -13,7 +13,7 @@ const isAQuestion = (text) => {
   return hasQuestionMark(text) || containsQuestion(text);
 }
 
-const isAnswerToQuestion = (question, answer, threshold = 0.5) => {
+const isAnswerToQuestion = (question, answer, threshold = 0.3) => {
   const lowercaseQuestion = question.toLowerCase();
   const lowercaseAnswer = answer.toLowerCase();
 

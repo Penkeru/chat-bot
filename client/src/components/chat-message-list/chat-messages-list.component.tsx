@@ -2,8 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import * as styles from './chat-messages-list.style';
 import { ChatMessagesListProps } from "./chat-messages-list.model";
-import { formatDateFromTimestamp, getUserNameColor } from "../../utils/converter.helper";
-import classNames from "classnames";
+import { ChatMessageItem } from "./chat-message-item/chat-message-item.component";
 
 export const ChatMessagesList = styled(({className, messages, userStreamId}: ChatMessagesListProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -17,17 +16,8 @@ export const ChatMessagesList = styled(({className, messages, userStreamId}: Cha
 
   return <div {...{className}} ref={containerRef}>
     {messages.map((msg, i) => (
-      <div className="message-container" key={i}>
-        <div className="message-user-avatar" style={{background:getUserNameColor(msg.name.toUpperCase())}}>
-          <span>{msg.name.toUpperCase().slice(0,2)}</span>
-        </div>
-        <div className={classNames('message-text', {'current-user': msg.streamId === userStreamId})}>
-          <span>{msg.message}</span>
-          <div className="message-date">
-            <span>{formatDateFromTimestamp(msg.date).time}</span>
-          </div>
-        </div>
-      </div>
+      <ChatMessageItem message={msg.message} date={msg.date} username={msg.name} isCurrentUser={msg.streamId === userStreamId} key={i}/>
     ))}
   </div>
+
 })`${styles.ChatMessagesList}`;
