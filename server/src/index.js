@@ -3,7 +3,7 @@ import httpServer from 'http';
 import cors from 'cors';
 import { Server } from "socket.io";
 import { AppController } from "./controllers/appController.js";
-import { ChatBot } from "./chat-bot/chat-bot.js";
+import { ChatBot } from "./services/chat-bot/chat-bot.js";
 
 const app = express();
 const serverPort = 4000;

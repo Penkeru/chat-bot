@@ -4,12 +4,20 @@ import * as styles from './chat-message-item.style';
 import { ChatMessageItemProps } from './chat-message-item.model';
 import { formatDateFromTimestamp, getUserNameColor } from "../../../utils/converter.helper";
 import classNames from "classnames";
-import { TypingAnimation } from "../../typing-animation/typing-animation.component";
 
 export const ChatMessageItem = styled(({className, message, date, username, isCurrentUser, messageAppearanceTime = 100}: ChatMessageItemProps) => {
   const [visible, setVisible] = useState<boolean>(false);
-  const userInitials = useMemo(()=> username.slice(0,2).toUpperCase(),[username]);
-  const userColor = useMemo(()=> getUserNameColor(username.toUpperCase()),[username]);
+
+  const {userColor, userInitials} = useMemo(()=> {
+    if(username) {
+      const currentUserName = username.toUpperCase();
+      const userColor = getUserNameColor(currentUserName);
+      const userInitials = currentUserName.length > 2 ? currentUserName.slice(0,2) : currentUserName;
+      return {userColor, userInitials};
+    } else{
+      return {};
+    }
+  },[username]);
   const cleanMessage = useMemo(()=> message.trim(),[message]);
   const time = useMemo(()=> formatDateFromTimestamp(date).time,[date]);
 
@@ -25,7 +33,7 @@ export const ChatMessageItem = styled(({className, message, date, username, isCu
         <span>{userInitials}</span>
       </div>
       <div className={classNames('message-text', {'current-user': isCurrentUser})}>
-        <TypingAnimation text={cleanMessage}/>
+        <span>{cleanMessage}</span>
         <div className="message-date">
           <span>{time}</span>
         </div>

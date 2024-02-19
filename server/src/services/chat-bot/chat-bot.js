@@ -1,50 +1,42 @@
-import { isAnswerToQuestion, isAQuestion } from "../utils/helper.js";
-
-
-
-const CHAT_BOT = 'CB'; //This is the name of the bot that will be sending messages to the client.
-const chatRoomUsers = []; //This is an array that will hold the users that join the chat room.
-const ConnectionType  = {
-    MESSAGES_STEAM : 'messages_stream',
-    USERS_LIST_STREAM : 'chatroom_users',
-    USER_SEND_MESSAGE : 'send_message',
-    USER_LEAVE_ROOM : 'leave_room',
-    USER_CONNECTED :'user_connected',
-    USER_JOINED_ROOM : 'user_joined_room',
-    USER_DISCONNECTED : 'disconnect',
-}
+import { isAnswerToQuestion, isAQuestion } from "../../utils/helper.js";
+import { BotMessageHandler } from "../bot-message-handler/bot-message-handler.js";
+import { ConnectionType } from "../../models/connection-type.js";
 
 const questionsList = [];
 
 export class ChatBot {
     constructor(io) {
         this.io = io;
+        this.botMessageHandler = new BotMessageHandler('CB');
+        this.chatRoomUsers = [];
     }
 
-    onUserConenected(socket) {
-        socket.on(ConnectionType.USER_JOINED_ROOM, ({userName}) => {
-            chatRoomUsers.push({userName, userConnectionId: socket.id});
-            socket.broadcast.emit(ConnectionType.MESSAGES_STEAM, {
-                message: ` ${userName} has joined the room! Say hello! :)`,
-                name: CHAT_BOT,
-                date: Date.now(),
-            });
-            socket.emit(ConnectionType.MESSAGES_STEAM, {
-                message: `Hey ${userName}, I am the chat bot. Enjoy your stay! :)`,
-                name: CHAT_BOT,
-                date :Date.now(),
-            });
 
-            this.io.emit(ConnectionType.USERS_LIST_STREAM, chatRoomUsers);
+    addChatRoomUser(userName, socketId){
+        this.chatRoomUsers.push({userName, socketId});
+        this.io.emit(ConnectionType.USERS_LIST_STREAM, this.chatRoomUsers);
+    }
+
+    removeChatRoomUser(userIndex){
+        this.chatRoomUsers.splice(userIndex, 1);
+        this.io.emit(ConnectionType.USERS_LIST_STREAM, this.chatRoomUsers);
+    }
+
+
+    onUserConnected(socket) {
+        socket.on(ConnectionType.USER_JOINED_ROOM, ({userName}) => {
+            this.botMessageHandler.broadcastMessage(socket, ConnectionType.MESSAGES_STEAM, `${userName} has joined the room! Say hello! :)`);
+            this.botMessageHandler.sendPrivateMessage(socket, ConnectionType.MESSAGES_STEAM,  `Hey ${userName}, I am the chat bot. Enjoy your stay! :)`);
+            this.addChatRoomUser(userName, socket.id);
         });
     }
 
-    async onUserSendMessage(socket){
+    onUserSendMessage(socket){
         socket.on(ConnectionType.USER_SEND_MESSAGE, ({message,name, date, streamId})=> {
             this.io.emit(ConnectionType.MESSAGES_STEAM, {message, name, date, streamId});
             const answerToQuestion = this.handleQuestions(message);
             if(answerToQuestion){
-                this.io.emit(ConnectionType.MESSAGES_STEAM, {message: answerToQuestion, name: CHAT_BOT, date: Date.now()});
+                this.botMessageHandler.sendPrivateMessage(this.io, ConnectionType.MESSAGES_STEAM, answerToQuestion);
             }
         });
     }
@@ -55,19 +47,21 @@ export class ChatBot {
     }
 
     handleUserConnection(socket) {
-        this.onUserConenected(socket);
+        this.onUserConnected(socket);
         this.onUserSendMessage(socket);
         this.onUserDisconnected(socket);
     }
 
     onUserLeave(socket) {
-        const userIndex = chatRoomUsers.findIndex((user) => user.userConnectionId === socket.id);
+        const userIndex = this.chatRoomUsers.findIndex((user) => user.socketId === socket.id);
         if(userIndex !== -1) {
-            const userName = chatRoomUsers[userIndex].userName;
-            chatRoomUsers.splice(userIndex, 1);
-
-            socket.broadcast.emit(ConnectionType.MESSAGES_STEAM, {message:`${userName} has left the room... So sad! :(`, name: CHAT_BOT, date: Date.now()});
-            this.io.emit(ConnectionType.USERS_LIST_STREAM, chatRoomUsers);
+            const userName = this.chatRoomUsers[userIndex].userName;
+            this.removeChatRoomUser(userIndex);
+            if(this.chatRoomUsers.length > 1) {
+                this.botMessageHandler.broadcastMessage(socket, ConnectionType.MESSAGES_STEAM, `${userName} has left the room...`);
+            } else {
+                this.botMessageHandler.broadcastMessage(socket, ConnectionType.MESSAGES_STEAM, `${userName} has left the room... Please don't leave me alone! :(`);
+            }
         }
     }
 
