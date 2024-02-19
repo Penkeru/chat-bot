@@ -28,8 +28,10 @@ const isAnswerToQuestion = (question, answer, threshold = 0.3) => {
   }
 
   return hitScore / questionWords.length >= threshold;
-} // if hitscore is more then 0.5 then it is an answer to the question;
+} // if hitscore is more then threshold then it is an answer to the question;
 
+const createIdFromText = (text) => { // Remove special characters and convert to lowercase
+  return btoa(text.replace(/[^\w\s]/gi, '').toLowerCase());
+}
 
-
-export { isAQuestion, isAnswerToQuestion}
+export { isAQuestion, isAnswerToQuestion, createIdFromText}
