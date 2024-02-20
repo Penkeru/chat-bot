@@ -16,6 +16,7 @@ export class BotMessageHandler{
     for (const question of unansweredQuestions) {
       if(isAnswerToQuestion(question.question, text)) {
         question.answer = text;
+        return "Got it! I will remember that for next time.";
       }
     }
     return "";
